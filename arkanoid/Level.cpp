@@ -1,78 +1,31 @@
 #include "Level.h"
+#include "BlockFactory.h"
+#include "Config.h"
 
 Level::Level() {
-
     generate();
 }
 
 void Level::generate() {
-
     blocks.clear();
-
-    const int rows = 6;
-    const int cols = 12;
-
-    const float blockWidth = 72.f;
-    const float blockHeight = 28.f;
-
-    const float startX = 50.f;
-    const float startY = 60.f;
-
-    const float gap = 1.f;
-
-    for (int y = 0; y < rows; y++) {
-
-        for (int x = 0; x < cols; x++) {
-
-            float bx =
-                startX +
-                x * (blockWidth + gap);
-
-            float by =
-                startY +
-                y * (blockHeight + gap);
-
-            BlockType type =
-                BlockType::NORMAL;
-
+    for (int y = 0; y < Config::BLOCK_ROWS; ++y) {
+        for (int x = 0; x < Config::BLOCK_COLS; ++x) {
+            float bx = Config::BLOCK_START_X + x * (Config::BLOCK_WIDTH + Config::BLOCK_GAP);
+            float by = Config::BLOCK_START_Y + y * (Config::BLOCK_HEIGHT + Config::BLOCK_GAP);
+            BlockCategory category = BlockCategory::NORMAL;
             int hp = 1;
-
-            if ((x + y) % 11 == 0) {
-
-                type =
-                    BlockType::UNBREAKABLE;
-            }
-            else if ((x + y) % 7 == 0) {
-
-                type =
-                    BlockType::SPEED;
-            }
-            else if ((x + y) % 5 == 0) {
-
-                type =
-                    BlockType::BONUS;
-            }
-            else if ((x + y) % 3 == 0) {
-
-                hp = 2;
-            }
-
-            blocks.emplace_back(
-                bx,
-                by,
-                type,
-                hp
-            );
+            if ((x + y) % 11 == 0) category = BlockCategory::UNBREAKABLE;
+            else if ((x + y) % 7 == 0) category = BlockCategory::SPEED;
+            else if ((x + y) % 5 == 0) category = BlockCategory::BONUS;
+            else if ((x + y) % 3 == 0) hp = 2;
+            blocks.push_back(BlockFactory::createBlock(category, bx, by, hp));
         }
     }
 }
 
-void Level::draw(
-    sf::RenderWindow& window
-) {
-
+void Level::draw(sf::RenderWindow& window) {
     for (auto& block : blocks) {
-
-        block.draw(window);
+        if (!block->isDestroyed()) block->draw(window);
     }
 }
+

@@ -1,8 +1,6 @@
 #pragma once
+#include <random>
 
-constexpr int WINDOW_WIDTH = 1000;
-constexpr int WINDOW_HEIGHT = 700;
+extern std::mt19937 gen;
+int rnd(int l, int r);
 
-constexpr float PADDLE_SPEED = 500.f;
-constexpr float BALL_SPEED = 250.f;
-constexpr int BALL_SUBSTEPS = 5;

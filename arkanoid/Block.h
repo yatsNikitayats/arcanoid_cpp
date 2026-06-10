@@ -1,26 +1,15 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "BlockType.h"
+
+class Ball;
+class BonusManager;
 
 class Block {
 public:
-    Block(float x,
-        float y,
-        BlockType type,
-        int hp);
-
-    void draw(sf::RenderWindow& window);
-
-    bool isDestroyed() const;
-
-    sf::Vector2f position;
-
-    float width;
-    float height;
-
-    int hp;
-
-    BlockType type;
-
-    sf::RectangleShape shape;
+    virtual ~Block() = default;
+    virtual void draw(sf::RenderWindow& window) = 0;
+    virtual bool isDestroyed() const = 0;
+    virtual void onHit(Ball& ball, BonusManager& bonusManager, int& score) = 0;
+    virtual sf::FloatRect getBounds() const = 0;
 };
+

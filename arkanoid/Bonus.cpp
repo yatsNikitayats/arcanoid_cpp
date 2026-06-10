@@ -1,61 +1,26 @@
 #include "Bonus.h"
+#include "Config.h"
 
-Bonus::Bonus(float x,
-    float y,
-    BonusType t)
-    : type(t),
-    active(true),
-    speed(240.f)
-{
-    position = { x, y };
-
-    shape.setSize({ 24.f, 24.f });
-
-    shape.setOrigin({ 12.f, 12.f });
-
-    switch (type) {
-
-    case BonusType::BIG_PADDLE:
-        shape.setFillColor(sf::Color::Green);
-        break;
-
-    case BonusType::SMALL_PADDLE:
-        shape.setFillColor(sf::Color::Red);
-        break;
-
-    case BonusType::FAST_BALL:
-        shape.setFillColor(sf::Color::Yellow);
-        break;
-
-    case BonusType::SLOW_BALL:
-        shape.setFillColor(sf::Color::Blue);
-        break;
-
-    case BonusType::STICKY:
-        shape.setFillColor(sf::Color::Magenta);
-        break;
-
-    case BonusType::BOTTOM_WALL:
-        shape.setFillColor(sf::Color::Cyan);
-        break;
-
-    case BonusType::RANDOM_TRAJECTORY:
-        shape.setFillColor(sf::Color::White);
-        break;
-    }
+Bonus::Bonus(float x, float y, sf::Color color)
+    : position{ x, y }, speed(Config::BONUS_SPEED), active(true) {
+    shape.setSize({ Config::BONUS_SIZE, Config::BONUS_SIZE });
+    shape.setOrigin({ Config::BONUS_HALF_SIZE, Config::BONUS_HALF_SIZE });
+    shape.setFillColor(color);
+    shape.setPosition(position);
 }
 
 void Bonus::update(float dt) {
-
     position.y += speed * dt;
+    shape.setPosition(position);
+    if (position.y > Config::WINDOW_HEIGHT) active = false;
 }
 
 void Bonus::draw(sf::RenderWindow& window) {
-
-    if (!active)
-        return;
-
-    shape.setPosition(position);
-
-    window.draw(shape);
+    if (active) window.draw(shape);
 }
+
+sf::FloatRect Bonus::getBounds() const {
+    return sf::FloatRect(position - sf::Vector2f(Config::BONUS_HALF_SIZE, Config::BONUS_HALF_SIZE),
+        { Config::BONUS_SIZE, Config::BONUS_SIZE });
+}
+
